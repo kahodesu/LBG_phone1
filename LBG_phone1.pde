@@ -1,10 +1,3 @@
-////////////////////////////////////
-//Lightning Bug Game - Phone1 Code// 
-//Kaho Abe                        //
-////////////////////////////////////
-//Goes on Android Phone Nexus1    //
-//This is the Shooter             //
-////////////////////////////////////
 import ketai.net.*;
 import ketai.ui.*;
 import ketai.sensors.*;
@@ -16,7 +9,7 @@ KetaiSensor sensor;
 public OscP5 oscP5;
 NetAddress iMacAddress;
  
-
+float pinchValue;
 float lightValue;
 ArrayList<Float> AValue = new ArrayList<Float>();
 ArrayList<Float> GValue = new ArrayList<Float>();
@@ -27,8 +20,9 @@ void setup(){
   orientation(LANDSCAPE);
    
   oscP5 = new OscP5(this,12001);
-  iMacAddress = new NetAddress("192.168.1.235",12000);
+  iMacAddress = new NetAddress("10.0.1.5",12000);
    
+  pinchValue = 0;
   lightValue = 0;
   for(int i = 0; i < 3; i++){
     AValue.add(new Float(0));
@@ -55,22 +49,28 @@ public boolean surfaceTouchEvent(android.view.MotionEvent event) {
  
 void draw(){
    
-
+  pinchValue += (1-pinchValue)/5;
    
   String info = "";
   info += "AccelerometerX:"+AValue.get(0)+"\n";
   info += "AccelerometerY:"+AValue.get(1)+"\n";
   info += "AccelerometerZ:"+AValue.get(2)+"\n";
- 
+  info += "GyroscopeX:"+GValue.get(0)+"\n";
+  info += "GyroscopeY:"+GValue.get(1)+"\n";
+  info += "GyroscopeZ:"+GValue.get(2)+"\n";
   info += "OrientationX:"+OValue.get(0)+"\n";
   info += "OrientationY:"+OValue.get(1)+"\n";
   info += "OrientationZ:"+OValue.get(2)+"\n";
    
   OscMessage sendValue = new OscMessage("/AndroidOSC");
+  sendValue.add(pinchValue);
   sendValue.add(lightValue);
   sendValue.add(AValue.get(0));
   sendValue.add(AValue.get(1));
   sendValue.add(AValue.get(2));
+  sendValue.add(GValue.get(0));
+  sendValue.add(GValue.get(1));
+  sendValue.add(GValue.get(2));
   sendValue.add(OValue.get(0));
   sendValue.add(OValue.get(1));
   sendValue.add(OValue.get(2));
@@ -95,8 +95,6 @@ void onAccelerometerEvent(float x, float y, float z){
    
 }
  
- 
- /*
 void onGyroscopeEvent(float x, float y, float z){
    
   float GX = 0.9*GValue.get(0)+0.1*x;
@@ -108,8 +106,6 @@ void onGyroscopeEvent(float x, float y, float z){
   GValue.set(2,GZ);
    
 }
- 
- */
  
 void onOrientationEvent(float x, float y, float z){
    
@@ -125,16 +121,12 @@ void onOrientationEvent(float x, float y, float z){
  
 void onLightEvent(float v){
    
-//  lightValue = v;
-lightValue = 5;
+  lightValue = v;
    
 }
  
-
-/*
 void onPinch(float x, float y, float d){
    
   pinchValue = d;
    
 }
-*/

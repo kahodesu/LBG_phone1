@@ -62,7 +62,7 @@ void draw(){
   info += "OrientationY:"+OValue.get(1)+"\n";
   info += "OrientationZ:"+OValue.get(2)+"\n";
    
-  OscMessage sendValue = new OscMessage("/AndroidOSC");
+  OscMessage sendValue = new OscMessage("/AndroidOSC1");
   sendValue.add(pinchValue);
   sendValue.add(lightValue);
   sendValue.add(AValue.get(0));

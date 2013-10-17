@@ -1,56 +1,23 @@
-////////////////////////////////////
-//Lightning Bug Game - Phone1 Code// 
-//Kaho Abe                        //
-////////////////////////////////////
-//Goes on Android Phone Nexus1    //
-//This is the Shooter             //
-//                                //
-//**remember to check INTERNET    //
-//on SKETCH PERMISSIONS!!!!!!     //
-////////////////////////////////////
+/////////////////////////////////////////////////
+//      Lightning Bug Game - Phone1 Code       // 
+//                  Kaho Abe                   //
+/////////////////////////////////////////////////
+//  *Goes on Android Phone Nexus1 (SHOOTER)    //
+//  *See README in LAPTOP code for references! //
+//  *Make sure to checkINTERNETon SKETCH PERMS //
+/////////////////////////////////////////////////
 
-///////////VARIABLES TO SET////////////
-String laptopIP = "10.0.1.2";
-String phoneName = "/PHONE1";//"/PHONE1";**with Slash
-
-
-///////////OTHER VARIABLES/////////////
-import ketai.net.*;
+///////////LIBRARIES/////////////
 import ketai.ui.*;
-import ketai.sensors.*;
-import oscP5.*;
-import netP5.*;
- 
-KetaiGesture gesture;
-KetaiSensor sensor;
-public OscP5 oscP5;
-NetAddress laptop;
- 
-float accelerometerX, accelerometerY, accelerometerZ;
-float lightValue;
 
 ///////////MAIN CODE/////////////
 void setup(){
   size(displayWidth, displayHeight);
   orientation(LANDSCAPE);
    
-  oscP5 = new OscP5(this,12001);
-  laptop = new NetAddress(laptopIP,12000);
-   
- 
-  lightValue = 0;
-
-   
-  gesture = new KetaiGesture(this);
-  sensor = new KetaiSensor(this);
-  sensor.enableLight();
-  sensor.enableAccelerometer();
-  //sensor.enableGyroscope();
-  //sensor.enableOrientation();
-  sensor.start();
-
+  setupOSC();
+  setupSensors();
 }
- 
  
 void draw(){
   //to display Accelerometer readings on phone screen
@@ -69,28 +36,9 @@ void draw(){
   fill(255);
   text(info,50,50); 
   
-  //uses OSC to send values to Laptop
-  OscMessage sendValue = new OscMessage(phoneName);
-  sendValue.add(lightValue);
-  sendValue.add(accelerometerX);
-  sendValue.add(accelerometerY);
-  sendValue.add(accelerometerZ);
-  oscP5.send(sendValue, laptop);
-}
-
-//upon reading Accelerometer
-void onAccelerometerEvent(float x, float y, float z)
-{
-  accelerometerX = x;
-  accelerometerY = y;
-  accelerometerZ = z;
-}
-
-//Saving this for something else? 
-void onLightEvent(float v){
-   
-  lightValue = v;
-   
-}
+  //Ideally want to end up sending simple data after phone processes things.
+  sendOSC();
  
+}
+
 

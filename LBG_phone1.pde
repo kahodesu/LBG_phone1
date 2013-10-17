@@ -43,7 +43,7 @@ void setup(){
    
   gesture = new KetaiGesture(this);
   sensor = new KetaiSensor(this);
-  //sensor.enableLight();
+  sensor.enableLight();
   sensor.enableAccelerometer();
   //sensor.enableGyroscope();
   //sensor.enableOrientation();

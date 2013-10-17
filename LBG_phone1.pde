@@ -1,3 +1,20 @@
+////////////////////////////////////
+//Lightning Bug Game - Phone1 Code// 
+//Kaho Abe                        //
+////////////////////////////////////
+//Goes on Android Phone Nexus1    //
+//This is the Shooter             //
+//                                //
+//**remember to check INTERNET    //
+//on SKETCH PERMISSIONS!!!!!!     //
+////////////////////////////////////
+
+///////////VARIABLES TO SET////////////
+String laptopIP = "10.0.1.2";
+String phoneName = "/PHONE1";//"/PHONE1";**with Slash
+
+
+///////////OTHER VARIABLES/////////////
 import ketai.net.*;
 import ketai.ui.*;
 import ketai.sensors.*;
@@ -7,126 +24,73 @@ import netP5.*;
 KetaiGesture gesture;
 KetaiSensor sensor;
 public OscP5 oscP5;
-NetAddress iMacAddress;
+NetAddress laptop;
  
-float pinchValue;
+float accelerometerX, accelerometerY, accelerometerZ;
 float lightValue;
-ArrayList<Float> AValue = new ArrayList<Float>();
-ArrayList<Float> GValue = new ArrayList<Float>();
-ArrayList<Float> OValue = new ArrayList<Float>();
- 
+
+///////////MAIN CODE/////////////
 void setup(){
   size(displayWidth, displayHeight);
   orientation(LANDSCAPE);
    
   oscP5 = new OscP5(this,12001);
-  iMacAddress = new NetAddress("10.0.1.5",12000);
+  laptop = new NetAddress(laptopIP,12000);
    
-  pinchValue = 0;
+ 
   lightValue = 0;
-  for(int i = 0; i < 3; i++){
-    AValue.add(new Float(0));
-    GValue.add(new Float(0));
-    OValue.add(new Float(0));
-  }
+
    
   gesture = new KetaiGesture(this);
   sensor = new KetaiSensor(this);
-  sensor.enableLight();
+  //sensor.enableLight();
   sensor.enableAccelerometer();
-  sensor.enableGyroscope();
-  sensor.enableOrientation();
+  //sensor.enableGyroscope();
+  //sensor.enableOrientation();
   sensor.start();
-   
+
 }
  
-public boolean surfaceTouchEvent(android.view.MotionEvent event) {
-   
-  super.surfaceTouchEvent(event);
-  return gesture.surfaceTouchEvent(event);
-   
-}
  
 void draw(){
-   
-  pinchValue += (1-pinchValue)/5;
-   
+  //to display Accelerometer readings on phone screen
   String info = "";
-  info += "AccelerometerX:"+AValue.get(0)+"\n";
-  info += "AccelerometerY:"+AValue.get(1)+"\n";
-  info += "AccelerometerZ:"+AValue.get(2)+"\n";
-  info += "GyroscopeX:"+GValue.get(0)+"\n";
-  info += "GyroscopeY:"+GValue.get(1)+"\n";
-  info += "GyroscopeZ:"+GValue.get(2)+"\n";
-  info += "OrientationX:"+OValue.get(0)+"\n";
-  info += "OrientationY:"+OValue.get(1)+"\n";
-  info += "OrientationZ:"+OValue.get(2)+"\n";
-   
-  OscMessage sendValue = new OscMessage("/AndroidOSC1");
-  sendValue.add(pinchValue);
-  sendValue.add(lightValue);
-  sendValue.add(AValue.get(0));
-  sendValue.add(AValue.get(1));
-  sendValue.add(AValue.get(2));
-  sendValue.add(GValue.get(0));
-  sendValue.add(GValue.get(1));
-  sendValue.add(GValue.get(2));
-  sendValue.add(OValue.get(0));
-  sendValue.add(OValue.get(1));
-  sendValue.add(OValue.get(2));
-  oscP5.send(sendValue, iMacAddress);
-   
+  info += "PHONE TWO\n";
+  info += "=======================\n"; 
+  info += "x: " + nfp(accelerometerX, 1, 3) + "\n";
+  info += "y: " + nfp(accelerometerY, 1, 3) + "\n";
+  info += "z: " + nfp(accelerometerZ, 1, 3)+ "\n";
+  info += "\n";
+  info += lightValue+ "\n";  //whatever variable I want to send to laptop
+  
+  //Phone screen crap
   background(0);
   textSize(20);
   fill(255);
-  text(info,50,50);
-   
+  text(info,50,50); 
+  
+  //uses OSC to send values to Laptop
+  OscMessage sendValue = new OscMessage(phoneName);
+  sendValue.add(lightValue);
+  sendValue.add(accelerometerX);
+  sendValue.add(accelerometerY);
+  sendValue.add(accelerometerZ);
+  oscP5.send(sendValue, laptop);
 }
- 
-void onAccelerometerEvent(float x, float y, float z){
-   
-  float AX = 0.9*GValue.get(0)+0.1*x;
-  float AY = 0.9*GValue.get(1)+0.1*y;
-  float AZ = 0.9*GValue.get(2)+0.1*z;
-   
-  AValue.set(0,AX);
-  AValue.set(1,AY);
-  AValue.set(2,AZ);
-   
+
+//upon reading Accelerometer
+void onAccelerometerEvent(float x, float y, float z)
+{
+  accelerometerX = x;
+  accelerometerY = y;
+  accelerometerZ = z;
 }
- 
-void onGyroscopeEvent(float x, float y, float z){
-   
-  float GX = 0.9*GValue.get(0)+0.1*x;
-  float GY = 0.9*GValue.get(1)+0.1*y;
-  float GZ = 0.9*GValue.get(2)+0.1*z;
-   
-  GValue.set(0,GX);
-  GValue.set(1,GY);
-  GValue.set(2,GZ);
-   
-}
- 
-void onOrientationEvent(float x, float y, float z){
-   
-  float OX = 0.9*OValue.get(0)+0.1*x;
-  float OY = 0.9*OValue.get(1)+0.1*y;
-  float OZ = 0.9*OValue.get(2)+0.1*z;
-   
-  OValue.set(0,OX);
-  OValue.set(1,OY);
-  OValue.set(2,OZ);
-   
-}
- 
+
+//Saving this for something else? 
 void onLightEvent(float v){
    
   lightValue = v;
    
 }
  
-void onPinch(float x, float y, float d){
-   
-  pinchValue = d;
-   
-}
+

@@ -1,7 +1,7 @@
 ///////////VARIABLES TO SET////////////
-String laptopIP = "10.0.1.2";
+String laptopIP = "10.0.1.3";
 String phoneName = "/PHONE1";  //"/PHONE1";**with Slash
-
+int phoneVal;
 ///////////////LIBRARIES////////////////
 import ketai.net.*;
 import oscP5.*;
@@ -14,16 +14,27 @@ NetAddress laptop;
 //////////////FUNCTIONS////////////////
 void setupOSC(){
   oscP5 = new OscP5(this,12001);
-  laptop = new NetAddress(laptopIP,12000);
+  laptop = new NetAddress(laptopIP,11000);
 }
 
-void sendOSC(){
-  //uses OSC to send values to Laptop
-  OscMessage sendValue = new OscMessage(phoneName);
-  sendValue.add(lightValue);
-  sendValue.add(accelerometerX);
-  sendValue.add(accelerometerY);
-  sendValue.add(accelerometerZ);
-  oscP5.send(sendValue, laptop);  
+void sendOSC(int Msg){
+  OscMessage msg = new OscMessage(phoneName);
+  
+   msg.add(Msg); 
+   oscP5.send(msg, laptop);  
+
+  // msg = null;
+  // info +=msg;
+
 }
+
+
+//If Phone were receiving messages too
+//void oscEvent(OscMessage theOscMessage) {
+//  if(theOscMessage.checkAddrPattern("/MAIN") == true) {
+//   if(theOscMessage.checkTypetag("i")) {
+//      phoneVal = theOscMessage.get(0).intValue();  
+//  }
+// }
+//}
 

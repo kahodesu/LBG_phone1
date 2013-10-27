@@ -7,7 +7,7 @@
 //  *Make sure to checkINTERNETon SKETCH PERMS //
 /////////////////////////////////////////////////
 
-///////////LIBRARIES/////////////
+///////////VARIABLES/////////////
 boolean holdingHands = false;
 boolean lastHoldingHands = false;
 
@@ -15,7 +15,6 @@ boolean pushButtonState = false;
 DigitalInput pushButton;
 boolean buttonread = false;
       
- String info;
 ///////////MAIN CODE/////////////
 void setup(){
   size(displayWidth, displayHeight);

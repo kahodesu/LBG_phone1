@@ -32,6 +32,10 @@ void ioioSetup(IOIO ioio) throws ConnectionLostException {
 
 void ioioLoop(IOIO ioio) throws ConnectionLostException {
   holdingHands = readGlove();
+  if (phoneVal2 ==1 ) {
+    mode =0;
+    
+  }
 
   ////BLACKOUT-----------------------------  
   if (mode == BLACKOUT) {

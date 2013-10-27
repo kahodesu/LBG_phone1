@@ -33,9 +33,14 @@ void ioioSetup(IOIO ioio) throws ConnectionLostException {
 void ioioLoop(IOIO ioio) throws ConnectionLostException {
   holdingHands = readGlove();
   if (phoneVal2 ==1 ) {
-    mode =0;
-    
+    mode =BLACKOUT;
+    background(0);
+    for (int i=0;i<digPinArray.length;i++) {
+      digPinArray[i].write(false);
+    }
   }
+  else {
+
 
   ////BLACKOUT-----------------------------  
   if (mode == BLACKOUT) {
@@ -100,6 +105,7 @@ void ioioLoop(IOIO ioio) throws ConnectionLostException {
     mode = BLACKOUT; //goto black out
     sendOSC(BLACKOUT);
     background(0);
+  }
   }
   //--------------------------------------------
   status();

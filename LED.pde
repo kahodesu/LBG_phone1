@@ -57,7 +57,7 @@ void ioioLoop(IOIO ioio) throws ConnectionLostException {
       else {
         if (lastHoldingHands == true) {
           digPinArray[i].write(true); // status LED is active low, hence the "1.0 -" 
-          delay(1000);
+          delay(750);
         }
          else break;
       }
@@ -71,7 +71,7 @@ void ioioLoop(IOIO ioio) throws ConnectionLostException {
       for (int i=0;i<digPinArray.length;i++) {
         digPinArray[i].write(false);
       }
-      delay(500);
+      delay(750);
       mode = SHOOT; //goes to shoot!!p
       sendOSC(SHOOT);
     }
@@ -98,8 +98,10 @@ void ioioLoop(IOIO ioio) throws ConnectionLostException {
     background(0);
   }
   //--------------------------------------------
+  status();
+  println(mode);
   lastHoldingHands = holdingHands;
-   status();
+
 }
 
 boolean readGlove () { 

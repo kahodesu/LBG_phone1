@@ -8,8 +8,6 @@
 /////////////////////////////////////////////////
 
 ///////////LIBRARIES/////////////
-import ketai.ui.*;
-
 boolean holdingHands = false;
 boolean lastHoldingHands = false;
 
@@ -22,13 +20,15 @@ boolean buttonread = false;
 void setup(){
   size(displayWidth, displayHeight);
   orientation(LANDSCAPE);
+ 
+  new PIOIOManager(this).start();
   setupOSC();
-   new PIOIOManager(this).start();
+  setupBT();
 
 }
  
 void draw(){
-  // status();
+
 }
 
 

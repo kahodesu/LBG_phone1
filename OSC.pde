@@ -14,32 +14,30 @@ public OscP5 oscP5;
 NetAddress laptop;
 //NetAddress phone2;
 NetAddress everyone;
-int phoneVal2;
+int tankEmpty = 0;
 
 //////////////FUNCTIONS////////////////
-void setupOSC(){
- oscP5 = new OscP5(this,11000);
- // laptop = new NetAddress(laptopIP,11000);
- // phone2 = new NetAddress(phone2IP,11000);
-  //laptop = new NetAddress(laptopIP,11000);
-  everyone = new NetAddress(everyoneIP,11000);
+void setupOSC() {
+  oscP5 = new OscP5(this, 11000);//I listen here
+  // laptop = new NetAddress(laptopIP,11000);
+  // phone2 = new NetAddress(phone2IP,11000);
+  everyone = new NetAddress(everyoneIP, 11000); //i send shit out here
 }
 
-void sendOSC(int Msg){
-  OscMessage msg = new OscMessage(phoneName);
-   msg.add(Msg); 
- //  oscP5.send(msg, laptop);  
+void sendOSC(int Msg) {
+  OscMessage msg = new OscMessage(phoneName);//putting my ID on it yo
+  msg.add(Msg); 
+  //oscP5.send(msg, laptop);  
   // oscP5.send(msg, phone2);  
-    oscP5.send(msg, everyone);
- 
-  println("sent");
+  oscP5.send(msg, everyone);//i am sending this data to everyone!
+  return;
 }
 
-
-void oscEvent(OscMessage theOscMessage) {
+synchronized void oscEvent(OscMessage theOscMessage) {
   if(theOscMessage.checkAddrPattern(phoneName2) == true) {
-   if(theOscMessage.checkTypetag("i")) {
-      phoneVal2 = theOscMessage.get(0).intValue();  
+  if(theOscMessage.checkTypetag("i")) {
+      tankEmpty = theOscMessage.get(0).intValue();  
+      println("tank:"+tankEmpty);
   }
  }
 }

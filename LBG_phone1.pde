@@ -13,7 +13,7 @@ boolean lastHoldingHands = false;
 
 boolean pushButtonState = false;
 DigitalInput pushButton;
-boolean buttonread = false;
+DigitalOutput laser;
       
 ///////////MAIN CODE/////////////
 void setup(){
@@ -23,11 +23,14 @@ void setup(){
   new PIOIOManager(this).start();
   setupOSC();
   setupBT();
+  setupSensors();
 
 }
  
-void draw(){
-
+synchronized void draw(){
+ // vibe.vibrate(1000);
+background(0);
+status();
 }
 
 

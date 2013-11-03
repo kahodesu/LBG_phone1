@@ -6,8 +6,8 @@ import com.pinkhatproductions.pioio.*;
 ///////////////VARIABLES////////////////
 PwmOutput[] pinArray = new PwmOutput[8];
 DigitalOutput[] digPinArray = new DigitalOutput[8];
-
 int mode = 0;
+
 int[] row= {
   29, 30, 31, 32, 34, 35, 36, 37
 };
@@ -24,74 +24,82 @@ static final int SHIMMER = 4;
 ///////////////////////////////////////////////
 
 void ioioSetup(IOIO ioio) throws ConnectionLostException {
-  pushButton = ioio.openDigitalInput(10, DigitalInput.Spec.Mode.PULL_DOWN);
+  pushButton = ioio.openDigitalInput(9, DigitalInput.Spec.Mode.PULL_DOWN);
+  laser = ioio.openDigitalOutput(46, true);
   for (int i=0;i<digPinArray.length;i++) {
-      digPinArray[i]= ioio.openDigitalOutput(row[i], false);
-    }
+    digPinArray[i]= ioio.openDigitalOutput(row[i], false);
+  }
 }
 
-void ioioLoop(IOIO ioio) throws ConnectionLostException {
+synchronized void ioioLoop(IOIO ioio) throws ConnectionLostException {
+//  laser.write(true);
+  background(0);
   holdingHands = readGlove();
-  if (phoneVal2 ==1 ) {
-    mode =BLACKOUT;
-    background(0);
-    for (int i=0;i<digPinArray.length;i++) {
-      digPinArray[i].write(false);
-    }
+
+
+  if (tankEmpty == 1) {
+    mode = BLACKOUT; //goto black out
   }
   else {
-
-
   ////BLACKOUT-----------------------------  
   if (mode == BLACKOUT) {
-    background(0);
+      laser.write(false);
+      background(0);
+  
     for (int i=0;i<digPinArray.length;i++) {
       digPinArray[i].write(false);
     }
-    if (holdingHands == true && lastHoldingHands == true) {
+   
+    if (holdingHands == true && lastHoldingHands == true && tankEmpty == 0) {
       mode = POWER;
       sendOSC(POWER);
     }
   }
   ////POWER------------------------------------   
-  else if (mode == POWER) {
-    background (120, 0, 0);
+  else if (mode == POWER && tankEmpty == 0) {
+     laser.write(true);
+     background (120, 0, 0);
     for (int i=0;i<digPinArray.length;i++) {
       if (!readGlove()) {
         holdingHands = false;
         mode = BLACKOUT;
         sendOSC(BLACKOUT);
+          laser.write(false);
         break;
       }
       else {
         if (lastHoldingHands == true) {
           digPinArray[i].write(true); // status LED is active low, hence the "1.0 -" 
-          delay(750);
+          delay(500);
         }
-         else break;
+        else break;
       }
     }
     mode = PAUSE;
   }
   ////PAUSE------------------------------------     
-  else if (mode == PAUSE) {
-    background (0, 0, 255);
+  else if (mode == PAUSE && tankEmpty == 0) {
+       laser.write(true);
+       background (0, 0, 255);
     if (holdingHands == true && lastHoldingHands == true) {
       for (int i=0;i<digPinArray.length;i++) {
         digPinArray[i].write(false);
       }
-      delay(750);
+      delay(500);
       mode = SHOOT; //goes to shoot!!p
       sendOSC(SHOOT);
     }
     else {
       mode =BLACKOUT;
       sendOSC(BLACKOUT);
+        laser.write(false);
     }
   }
   ////SHOOT------------------------------------   
-  else if (mode == SHOOT) {
-      background(255,0,0);
+  else if (mode == SHOOT && tankEmpty == 0) {
+    background(255, 0, 0);
+      laser.write(true);
+ 
     if (holdingHands == true && lastHoldingHands == true) {
       for (int i=0;i<digPinArray.length;i++) {
         digPinArray[i].write(true);
@@ -104,14 +112,16 @@ void ioioLoop(IOIO ioio) throws ConnectionLostException {
     holdingHands = false;
     mode = BLACKOUT; //goto black out
     sendOSC(BLACKOUT);
+       laser.write(false);
     background(0);
   }
   }
+  
+  
   //--------------------------------------------
   status();
-  println(mode);
+  //println(mode);
   lastHoldingHands = holdingHands;
-
 }
 
 boolean readGlove () { 
